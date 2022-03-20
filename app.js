@@ -17,10 +17,16 @@ function consoleMessageWatcher() {
     const chatId = ctx.chat.id;
     const text = ctx.text;
     const msgId = ctx.message_id;
-    console.log("message object", ctx);
-   
+
+    console.log(ctx);
+
+       bot
+      .getChatAdministrators(chatId)
+      .then((res) => console.log(res))
+      .catch(() => console.log("getChatAdministrators error"));
   });
 }
+
 function getRandomInt(max) {
   return Math.floor(Math.random() * max);
 }
@@ -68,54 +74,63 @@ function clear() {
     let value = ctx.text.split(" ")[1];
     let lastMsgId = ctx.message_id;
 
-    if (isNaN(value)) {
-      bot.sendMessage(
-        chatId,
-        "Аргумент к чистке не является числом, отменяю..."
-      );
-      setTimeout(() => {
-        deleteBotResponseAndFirstAfterLastMessage();
-      }, 3000);
-      return;
+    //easy validation
+    if (5026516200 === ctx.from.id || 500274251 === ctx.from.id) {
+      clearHelper(value, chatId, lastMsgId);
     } else {
-      bot.sendMessage(chatId, "Выполняю чистку...");
+      return;
     }
 
-    setTimeout(() => {
-      deleteBotResponseAfterOnClearMainLoop();
-    }, 2000);
-
-    setTimeout(() => {
-      onClearMainLoop(value, chatId, lastMsgId);
-    }, 1000);
-
-    async function deleteBotResponseAndFirstAfterLastMessage() {
-      try {
-        await bot.deleteMessage(chatId, lastMsgId + 1);
-        await bot.deleteMessage(chatId, lastMsgId);
-      } catch (e) {
-        console.log("message id was not found");
+    function clearHelper(value, chatId, lastMsgId) {
+      if (isNaN(value)) {
+        bot.sendMessage(
+          chatId,
+          "Аргумент к чистке не является числом, отменяю..."
+        );
+        setTimeout(() => {
+          deleteBotResponseAndFirstAfterLastMessage();
+        }, 3000);
+        return;
+      } else {
+        bot.sendMessage(chatId, "выполняю чистку");
       }
-    }
 
-    async function deleteBotResponseAfterOnClearMainLoop() {
-      try {
-        await bot.deleteMessage(chatId, lastMsgId + 1);
-      } catch (e) {
-        console.log("message id was not found");
-      }
-    }
+      setTimeout(() => {
+        deleteBotResponseAfterOnClearMainLoop();
+      }, 2000);
 
-    async function onClearMainLoop(value, chatId, lastMsgId) {
-      while (value !== -1) {
+      setTimeout(() => {
+        onClearMainLoop(value, chatId, lastMsgId);
+      }, 1000);
+
+      async function deleteBotResponseAndFirstAfterLastMessage() {
         try {
+          await bot.deleteMessage(chatId, lastMsgId + 1);
           await bot.deleteMessage(chatId, lastMsgId);
-          console.log("message deleted", lastMsgId);
-          value--;
-          lastMsgId--;
         } catch (e) {
           console.log("message id was not found");
-          lastMsgId--;
+        }
+      }
+
+      async function deleteBotResponseAfterOnClearMainLoop() {
+        try {
+          await bot.deleteMessage(chatId, lastMsgId + 1);
+        } catch (e) {
+          console.log("message id was not found");
+        }
+      }
+
+      async function onClearMainLoop(value, chatId, lastMsgId) {
+        while (value !== -1) {
+          try {
+            await bot.deleteMessage(chatId, lastMsgId);
+            console.log("message deleted", lastMsgId);
+            value--;
+            lastMsgId--;
+          } catch (e) {
+            console.log("message id was not found");
+            lastMsgId--;
+          }
         }
       }
     }
@@ -130,19 +145,19 @@ function greetings() {
     const msgId = ctx.message_id;
     const text = ctx.text;
     greetingsHelper(chatId, userName, text.toLocaleLowerCase(), msgId);
-    
+
     //exceptions
-    if(text.toLocaleLowerCase() === 'здрасте'){
-      bot.sendMessage(chatId,'забор покрасте',{
-        reply_to_message_id: msgId
-      })
+    if (text.toLocaleLowerCase() === "здрасте") {
+      bot.sendMessage(chatId, "забор покрасте", {
+        reply_to_message_id: msgId,
+      });
     }
-    if(text.toLocaleLowerCase() === 'здрасьте'){
-      bot.sendMessage(chatId,'забор покрасьте',{
-        reply_to_message_id: msgId
-      })
+    if (text.toLocaleLowerCase() === "здрасьте") {
+      bot.sendMessage(chatId, "забор покрасьте", {
+        reply_to_message_id: msgId,
+      });
     }
-  
+
     function userNameOrFirstNameHelper(ctx) {
       if (ctx.from.username === undefined) {
         return (userName = ctx.from.first_name);
@@ -161,7 +176,7 @@ function greetings() {
               setTimeout(() => {
                 bot.sendMessage(
                   chatId,
-                  `/* ${userName}  */${endingOfAWordAtNight()} тебе ${phrasesInRespectToHours()}!`,
+                  `${endingOfAWordAtNight()} тебе ${phrasesInRespectToHours()}!`,
                   {
                     reply_to_message_id: msgId,
                   }
