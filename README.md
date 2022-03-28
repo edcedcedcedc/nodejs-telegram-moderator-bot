@@ -1,4 +1,4 @@
-# Welcome
+# Welcome to the kot moderator
 This is a telegram bot using `nodejs` and [`node-telegram-bot-api`](https://github.com/yagop/node-telegram-bot-api.git) to manipulate the official telegram [api](https://core.telegram.org/api).
 
 ## Installation
@@ -19,11 +19,24 @@ Generate yourself a telegram token and paste it in .env `token` variable
 ### Available commands (in progress)
 ##
 
-`/clear integer` 
+`/kotclear positiveInteger` 
 delete n messages that are written no later than 48 hours
 
+`/kotmute username timeInSeconds`
+mute a user for n time
+note if user is mutted less then 30 seconds or more than 366 days it's considered to be mutted forever
+
+`/kotunmute username`
+unmute a user
 ### Available functions (in progress)
 ##
+```
+CRUdb()  
+```
+##
+creates a db.txt file for you where stores all chat members username/id
+only after they wrote any message, this is need for `/kotmute /kotunmute` to work.
+
 ```
 greetings()  
 ```
