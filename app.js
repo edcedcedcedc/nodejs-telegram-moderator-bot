@@ -15,9 +15,12 @@ yes();
 function unmute() {
   bot.onText(/^\/kotunmute/, function (ctx) {
     const chatId = ctx.chat.id;
+    let lastMsgId = ctx.message_id;
     let value = ctx.text.split(" ")[1].substring(1);
     fs.readFile("db.txt", function (err, ctx) {
       if (ctx.includes(value)) {
+        let regex = new RegExp(value + "\\s\\d+");
+        console.log(regex);
         let valueAndFirstWhiteSpaceAndAnyDigitsTillAnyLetter = new RegExp(
           value + "\\s\\d+"
         );
@@ -47,10 +50,9 @@ function mute() {
   bot.onText(/^\/kotmute/, function (ctx) {
     const chatId = ctx.chat.id;
     let lastMsgId = ctx.message_id;
-    let time = ctx.text.split(" ")[2];
+    let time = ctx.text.split(" ")[2] * 1000;
     let valueWithAmpersant = ctx.text.split(" ")[1];
     let value = ctx.text.split(" ")[1].substring(1);
-    let unixTime = Math.round(Date.now() / 1000) + time;
     fs.readFile("db.txt", async function (err, ctx) {
       if (ctx.includes(value)) {
         let valueAndFirstWhiteSpaceAndAnyDigitsTillAnyLetter = new RegExp(
@@ -66,11 +68,19 @@ function mute() {
         console.log(userId);
         bot.restrictChatMember(chatId, userId, {
           can_send_messages: false,
-          until_date: unixTime,
         });
+        setTimeout(() => {
+          bot.restrictChatMember(chatId, userId, {
+            can_send_messages: true,
+            can_invite_users: true,
+            can_send_media_messages: true,
+            can_send_other_messages: true,
+            can_add_web_page_previews: true,
+          });
+        }, time);
         bot.sendMessage(
           chatId,
-          `${valueWithAmpersant} замьючен на ${time} секунд...`
+          `${valueWithAmpersant} замьючен на ${time / 1000} секунд...`
         );
         setTimeout(() => {
           deleteBotResponseAndFirstAfterLastMessage(chatId, lastMsgId);
