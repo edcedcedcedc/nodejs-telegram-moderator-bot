@@ -50,7 +50,7 @@ function mute() {
   bot.onText(/^\/kotmute/, function (ctx) {
     const chatId = ctx.chat.id;
     let lastMsgId = ctx.message_id;
-    let time = ctx.text.split(" ")[2] * 1000;
+    let milliseconds = ctx.text.split(" ")[2] * 1000;
     let valueWithAmpersant = ctx.text.split(" ")[1];
     let value = ctx.text.split(" ")[1].substring(1);
     fs.readFile("db.txt", async function (err, ctx) {
@@ -77,10 +77,10 @@ function mute() {
             can_send_other_messages: true,
             can_add_web_page_previews: true,
           });
-        }, time);
+        }, milliseconds);
         bot.sendMessage(
           chatId,
-          `${valueWithAmpersant} замьючен на ${time / 1000} секунд...`
+          `${valueWithAmpersant} замьючен на ${milliseconds / 1000} секунд...`
         );
         setTimeout(() => {
           deleteBotResponseAndFirstAfterLastMessage(chatId, lastMsgId);
