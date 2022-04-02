@@ -13,7 +13,7 @@ CRUdb();
 yes();
 
 function unmute() {
-  bot.onText(/^\/kotunmute/, function (ctx) {
+  bot.onText(/^\/kotunmute|^\/размьють|^\/размьютить/, function (ctx) {
     const chatId = ctx.chat.id;
     let lastMsgId = ctx.message_id;
     let value = ctx.text.split(" ")[1].substring(1);
@@ -40,7 +40,7 @@ function unmute() {
         });
         bot.sendMessage(chatId, `${value} размьючен...`);
         setTimeout(() => {
-          deleteBotResponseAndFirstAfterLastMessage(chatId, lastMsgId);
+          bot.deleteMessage(chatId, lastMsgId);
         }, 5000);
       }
     });
@@ -51,6 +51,7 @@ function mute() {
     const chatId = ctx.chat.id;
     let lastMsgId = ctx.message_id;
     let milliseconds = ctx.text.split(" ")[2] * 1000;
+    let shoutMessage = ctx.text.split(" ").slice(3).join(" ");
     let valueWithAmpersant = ctx.text.split(" ")[1];
     let value = ctx.text.split(" ")[1].substring(1);
     fs.readFile("db.txt", async function (err, ctx) {
@@ -80,10 +81,10 @@ function mute() {
         }, milliseconds);
         bot.sendMessage(
           chatId,
-          `${valueWithAmpersant} замьючен на ${milliseconds / 1000} секунд...`
+          `${valueWithAmpersant} замьючен на ${milliseconds / 1000} секунд, причина: ${shoutMessage}`
         );
         setTimeout(() => {
-          deleteBotResponseAndFirstAfterLastMessage(chatId, lastMsgId);
+          bot.deleteMessage(chatId, lastMsgId);
         }, 5000);
       }
     });
@@ -180,14 +181,7 @@ function yes() {
     }
   });
 }
-async function deleteBotResponseAndFirstAfterLastMessage(chatId, lastMsgId) {
-  try {
-    await bot.deleteMessage(chatId, lastMsgId + 1);
-    await bot.deleteMessage(chatId, lastMsgId);
-  } catch (e) {
-    console.log("message id was not found");
-  }
-}
+
 function clear() {
   bot.onText(/^\/kotclear/, async function (ctx) {
     const chatId = ctx.chat.id;
@@ -242,6 +236,15 @@ function clear() {
             console.log("message id was not found");
             lastMsgId--;
           }
+        }
+      }
+
+      async function deleteBotResponseAndFirstAfterLastMessage(chatId, lastMsgId) {
+        try {
+          await bot.deleteMessage(chatId, lastMsgId + 1);
+          await bot.deleteMessage(chatId, lastMsgId);
+        } catch (e) {
+          console.log("message id was not found");
         }
       }
     }
