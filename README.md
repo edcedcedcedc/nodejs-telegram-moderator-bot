@@ -30,23 +30,3 @@ note if user is mutted less then 30 seconds or more than 366 days it's considere
 
 `/kotunmute username`
 unmute a user
-### Available functions 
-##
-```
-CRUdb()  
-```
-creates a db.txt file for you where stores all chat members username/id
-only after they wrote any message, this is need for `/kotmute /kotunmute` to work.
-##
-```
-greetings()  
-```
-auto-reply to any greetings in russian depending on hours` till 12:00 morning, till 17:00 day, till 21:00 evening then night
-##
-```
-yes()
-```
-answer `да` то any regexp that matches `/\s{1}ко+т\s{1}|ко+т$/i`
-##
-## Contributing
-Pull requests are welcome. For major changes, please open an issue first to discuss what you would like to change.
